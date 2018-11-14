@@ -7,8 +7,16 @@ import jwt from 'jsonwebtoken';
 const userSchema = new mongoose.Schema({
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
-  email: {type: String}
+  email: {type: String},
+  role: {type: String, default: 'user', enum: ['user', 'editor', 'admin']},
+  capabilities: {type: Array}
 });
+
+const capabilities = {
+  user: ['read'],
+  editor: ['create', 'read', 'update'],
+  admin: ['create', 'read', 'update', 'delete']
+};
 
 userSchema.pre('save', function(next) {
   bcrypt.hash(this.password,10)
@@ -16,21 +24,25 @@ userSchema.pre('save', function(next) {
       this.password = hashedPassword;
       next();
     })
-    .catch( error => {throw error;} );
+    .catch(error => {throw error;});
 });
+
+userSchema.methods.can = function (capability) {
+  return capabilities[this.role].includes(capability);
+}; 
 
 userSchema.statics.createFromOAuth = function(incoming) {
 
-  if ( ! incoming || ! incoming.email ) {
+  if (! incoming || ! incoming.email) {
     return Promise.reject('VALIDATION ERROR: missing username/email or password ');
   }
 
   return this.findOne({email:incoming.email})
     .then(user => {
-      if ( ! user ) { throw new Error ('User Not Found'); }
+      if (! user) { throw new Error ('User Not Found'); }
       return user;
     })
-    .catch( error => {
+    .catch(error => {
     // Create the user
       let username = incoming.email;
       let password = 'none';
@@ -69,9 +81,10 @@ userSchema.methods.comparePassword = function(password) {
 // Generate a JWT from the user id and a secret
 userSchema.methods.generateToken = function() {
   let tokenData = {
-    id:this._id,
+    capabilities:capabilities[this.role],
+    id:this._id
   };
-  return jwt.sign(tokenData, process.env.SECRET || 'changeit' );
+  return jwt.sign(tokenData, process.env.SECRET || 'changeit');
 };
 
 export default mongoose.model('users', userSchema);

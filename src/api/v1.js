@@ -45,19 +45,19 @@ router.post('/api/v1/:model', auth('create'), (request,response,next) => {
     .catch( next );
 });
 
-router.put('/api/v1/:model/:id', auth('update') (request,response,next) => {
+router.put('/api/v1/:model/:id', auth('update'), (request,response,next) => {
   request.model.put(request.params.id, request.body)
     .then( result => sendJSON(result, response) )
     .catch( next );
 });
 
-router.patch('/api/v1/:model/:id', auth('update') (request,response,next) => {
+router.patch('/api/v1/:model/:id', auth('update'), (request,response,next) => {
   request.model.patch(request.params.id, request.body)
     .then( result => sendJSON(result, response) )
     .catch( next );
 });
 
-router.delete('/api/v1/:model/:id', auth('delete') (request,response,next) => {
+router.delete('/api/v1/:model/:id', auth('delete'), (request,response,next) => {
   request.model.delete(request.params.id)
     .then( result => sendJSON(result, response) )
     .catch( next );
