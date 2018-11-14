@@ -13,7 +13,7 @@ beforeAll(startDB);
 afterAll(stopDB);
 
 // Unmock our model (might have been mocked by a previous test)
-jest.unmock('require-directory');
+// jest.unmock('require-directory');
 
 describe('api server', () => {
 
