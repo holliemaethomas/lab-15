@@ -43,7 +43,7 @@ describe('Auth Router', () => {
         return mockRequest.post('/signin')
           .auth(users[userType].username, users[userType].password)
           .then(results => {
-            var token = jwt.verify(results.text, process.env.SECRET || 'changeit');
+            var token = jwt.verify.(results.text, process.env.SECRET || 'changeit');
             expect(token.id).toEqual(id);
             expect(token.capabilities).toBeDefined();
           });

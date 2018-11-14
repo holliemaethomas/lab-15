@@ -5,12 +5,12 @@ import { startDB, stopDB } from '../../supergoose.js';
 import auth from '../../../src/auth/middleware.js';
 import Users from '../../../src/auth/model.js';
 
-// beforeAll(startDB);
+beforeAll(startDB);
 
 let users = {
   admin: {username: 'admin', password: 'password', role: 'admin'},
   editor: {username: 'editor', password: 'password', role: 'editor'},
-  user: {username: 'user', password: 'password', role: 'user'},
+  user: {username: 'user', password: 'password', role: 'user'}
 };
 
 beforeAll(async (done) => {
