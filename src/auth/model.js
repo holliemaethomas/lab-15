@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema ({
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   email: {type: String},
@@ -18,13 +18,13 @@ const capabilities = {
   admin: ['create', 'read', 'update', 'delete']
 };
 
-userSchema.pre('save', function(next) {
-  bcrypt.hash(this.password,10)
+userSchema.pre('save', function (next) {
+  bcrypt.hash(this.password, 10)
     .then(hashedPassword => {
       this.password = hashedPassword;
       next();
     })
-    .catch(error => {throw error;});
+    .catch(error => { throw error; });
 });
 
 userSchema.methods.can = function (capability) {
@@ -33,13 +33,13 @@ userSchema.methods.can = function (capability) {
 
 userSchema.statics.createFromOAuth = function(incoming) {
 
-  if (! incoming || ! incoming.email) {
+  if (!incoming || !incoming.email) {
     return Promise.reject('VALIDATION ERROR: missing username/email or password ');
   }
 
-  return this.findOne({email:incoming.email})
+  return this.findOne({ email:incoming.email })
     .then(user => {
-      if (! user) { throw new Error ('User Not Found'); }
+      if (!user) { throw new Error ('User Not Found'); }
       return user;
     })
     .catch(error => {
